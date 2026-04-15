@@ -4,6 +4,7 @@ export interface Meal {
   id: string;
   name: string;
   category?: string;
+  tags?: string[];
   createdAt: number;
 }
 
@@ -19,8 +20,8 @@ export class MealPlannerDB extends Dexie {
 
   constructor() {
     super('MealPlannerDB');
-    this.version(1).stores({
-      meals: 'id, name, createdAt', // Primary key and indexed props
+    this.version(2).stores({
+      meals: 'id, name, category, *tags, createdAt',
       plannedDays: 'dateStr, mealId'
     });
   }

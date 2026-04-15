@@ -142,6 +142,40 @@ h1, h2, h3 {
   background-color: rgba(0, 122, 255, 0.1);
 }
 
+.meal-drag-ghost {
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  opacity: 0.75;
+  transform: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  pointer-events: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--text);
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: grabbing;
+  z-index: 9999;
+}
+
+.ghost-icon {
+  display: flex;
+  align-items: center;
+  color: var(--primary);
+}
+
+.ghost-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Split View for Desktop */
 @media (min-width: 768px) {
   .app-container {
@@ -160,6 +194,22 @@ h1, h2, h3 {
   .view-index {
     flex: 1;
     max-width: 400px;
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border);
+    padding: 1.5rem;
+    overflow-y: auto;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .view-index.is-closed {
+    max-width: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    border: none;
   }
 }
 
@@ -182,9 +232,8 @@ h1, h2, h3 {
 
 .calendar-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  align-items: center;
   margin-bottom: 1rem;
 }
 
@@ -196,17 +245,40 @@ h1, h2, h3 {
   padding: 0.5rem;
   border-radius: 50%;
   transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .icon-btn:hover {
   background: var(--bg-secondary);
 }
 
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.text-btn:hover {
+  background: var(--soft-green);
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr) 24px;
   gap: 0.5rem;
-  flex: 1;
+  align-content: start;
 }
 
 .day-name {
@@ -214,7 +286,7 @@ h1, h2, h3 {
   font-weight: 600;
   color: var(--text-secondary);
   font-size: 0.85rem;
-  padding: 0.5rem 0;
+  padding: 0;
 }
 
 .day-name.week-col {
@@ -242,7 +314,8 @@ h1, h2, h3 {
   background: var(--bg-secondary);
   border: 2px solid transparent;
   border-radius: var(--radius);
-  min-height: 80px;
+  height: 100px; /* Fixed height for consistency */
+  min-width: 0; /* Enable truncation in flex */
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -252,6 +325,14 @@ h1, h2, h3 {
 .calendar-day:hover:not(.empty) {
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
+}
+
+.calendar-day:focus,
+.calendar-day.is-selected {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.4) !important;
+  z-index: 30;
 }
 
 .calendar-day.empty {
@@ -272,8 +353,8 @@ h1, h2, h3 {
 
 .calendar-day.is-selected {
   border-width: 3px;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
 }
 
 .date-number {
@@ -282,6 +363,18 @@ h1, h2, h3 {
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
   z-index: 10;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.date-number.today-number {
+  background-color: var(--text);
+  color: var(--bg) !important;
 }
 
 .calendar-day.is-weekend .date-number {
@@ -303,7 +396,14 @@ h1, h2, h3 {
 }
 
 .meal-name {
-  word-break: break-word;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  flex: 1;
 }
 
 .day-edit-input {
@@ -426,22 +526,182 @@ h1, h2, h3 {
 .clear-day-btn {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: #000; /* Black trashcan as requested */
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 50%;
-  transition: var(--transition);
   position: absolute;
   top: 0.25rem;
   right: 0.25rem;
-  opacity: 1;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.2s ease;
+}
+
+.calendar-day:hover .clear-day-btn {
+  opacity: 1; /* Show on hover */
 }
 
 .clear-day-btn:active {
-  color: var(--weekend-red) !important;
-  background-color: rgba(230, 57, 70, 0.1) !important;
+  transform: scale(0.9);
+}
+
+.meal-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.meal-item:hover .meal-item-actions {
+  opacity: 1;
+}
+
+.meal-count-badge {
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.25rem;
+}
+
+.icon-btn-sm {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.icon-btn-sm:hover {
+  background-color: var(--bg-secondary);
+}
+
+.meal-edit-inline {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
 }
 
 .calendar-day {
   position: relative; /* Ensure absolute positioning works for trash can */
+}
+
+/* Category & Filter Styles */
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.filter-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.filter-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-bar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.filter-chip {
+  padding: 0.4rem 0.8rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filter-chip:hover {
+  background: var(--border);
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  color: var(--primary-text);
+  border-color: var(--primary);
+}
+
+.category-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+}
+
+.category-koett, .category-kött { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.category-fisk { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+.category-kyckling { background: #fffde7; color: #f9a825; border: 1px solid #fff9c4; }
+.category-vego { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.category-okänd { background: #f3e5f5; color: #7b1fa2; border: 1px solid #e1bee7; }
+
+@media (prefers-color-scheme: dark) {
+  .category-koett, .category-kött { background: #421a1a; color: #ff8a80; }
+  .category-fisk { background: #1a2a42; color: #82b1ff; }
+  .category-kyckling { background: #423e1a; color: #ffff8d; }
+  .category-vego { background: #1a421c; color: #b9f6ca; }
+  .category-okänd { background: #2f1a42; color: #e1bee7; }
+}
+
+/* Calendar Day Category Backgrounds */
+.calendar-day.has-meal.cat-kött { background: #ffebee; }
+.calendar-day.has-meal.cat-fisk { background: #e3f2fd; }
+.calendar-day.has-meal.cat-kyckling { background: #fffde7; }
+.calendar-day.has-meal.cat-vego { background: #e8f5e9; }
+.calendar-day.has-meal.cat-okänd { background: #f3e5f5; }
+
+@media (prefers-color-scheme: dark) {
+  .calendar-day.has-meal.cat-kött { background: #421a1a; }
+  .calendar-day.has-meal.cat-fisk { background: #1a2a42; }
+  .calendar-day.has-meal.cat-kyckling { background: #423e1a; }
+  .calendar-day.has-meal.cat-vego { background: #1a421c; }
+  .calendar-day.has-meal.cat-okänd { background: #2f1a42; }
+}
+
+.category-select {
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.meal-card-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }

@@ -3,11 +3,13 @@ import { DndContext, DragEndEvent, DragStartEvent, TouchSensor, MouseSensor, use
 import { Calendar } from './Calendar';
 import { MealIndex, MealCard } from './MealIndex';
 import { db } from './db';
-import { CalendarDays, List as ListIcon } from 'lucide-react';
+import { CalendarDays, List as ListIcon, Beef, Fish, Drumstick, Leaf, HelpCircle } from 'lucide-react';
+import clsx from 'clsx';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'calendar' | 'index'>('calendar');
   const [activeDragMeal, setActiveDragMeal] = useState<{id: string, name: string} | null>(null);
+  const [isMealIndexOpen, setIsMealIndexOpen] = useState(true);
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -42,6 +44,16 @@ function App() {
     }
   };
 
+  const getCategoryIcon = (category?: string) => {
+    switch (category?.toLowerCase()) {
+      case 'kött': return <Beef size={16} />;
+      case 'fisk': return <Fish size={16} />;
+      case 'kyckling': return <Drumstick size={16} />;
+      case 'vego': return <Leaf size={16} />;
+      default: return <HelpCircle size={16} />;
+    }
+  };
+
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="app-container">
@@ -65,18 +77,25 @@ function App() {
 
         <main className="main-content">
           <div className={`pane view-calendar ${activeTab === 'calendar' ? 'active-pane' : ''}`}>
-            <Calendar />
+            <Calendar onToggleSidebar={() => setIsMealIndexOpen(!isMealIndexOpen)} isSidebarOpen={isMealIndexOpen} />
           </div>
-          <div className={`pane view-index ${activeTab === 'index' ? 'active-pane' : ''}`}>
+          <div className={clsx("pane view-index", { 
+            "active-pane": activeTab === 'index',
+            "is-closed": !isMealIndexOpen
+          })}>
             <MealIndex />
           </div>
         </main>
       </div>
-      <DragOverlay dropAnimation={{
-        duration: 200,
-        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)'
-      }}>
-        {activeDragMeal ? <MealCard name={activeDragMeal.name} isDragging /> : null}
+      <DragOverlay dropAnimation={null}>
+        {activeDragMeal ? (
+          <div className="meal-drag-ghost">
+            <span className="ghost-icon">
+              {getCategoryIcon((activeDragMeal as any).category)}
+            </span>
+            <span className="ghost-name">{activeDragMeal.name}</span>
+          </div>
+        ) : null}
       </DragOverlay>
     </DndContext>
   );
