@@ -1,0 +1,17 @@
+{
+  "name": "Meal Planner App",
+  "short_name": "Meals",
+  "description": "Modern PWA for managing meals and weekly schedules.",
+  "theme_color": "#1a73e8",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
