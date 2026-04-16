@@ -157,7 +157,7 @@ export const MealIndex: React.FC = () => {
             className="category-select"
             value={newMealCategory} 
             onChange={e => setNewMealCategory(e.target.value)}
-            style={{ flex: 1 }}
+            style={{ flex: 1, minWidth: '90px' }}
           >
             <option value="">Kategori...</option>
             {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
@@ -244,7 +244,7 @@ export const MealCard = ({ id, name, category, count, isDragging, dragHandleProp
               setEditCategory(val);
               handleUpdate(editValue, val);
             }}
-            style={{ padding: '2px 4px', fontSize: '0.75rem', flex: 1 }}
+            style={{ padding: '2px 4px', fontSize: '0.75rem', flex: 1, minWidth: '90px' }}
           >
             <option value="">Kategori...</option>
             {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
