@@ -215,6 +215,7 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
   const handleDelete = async () => {
     if (window.confirm(`Vill du ta bort "${name}" permanent?`)) {
       await db.meals.delete(id);
+      await db.plannedDays.where('mealId').equals(id).delete();
     }
   };
 
