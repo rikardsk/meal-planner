@@ -224,6 +224,7 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
             value={editValue}
             onChange={e => setEditValue(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleUpdate()}
+            onPointerDown={e => e.stopPropagation()}
             style={{ flex: 2 }}
           />
           <select
@@ -234,6 +235,7 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
               setEditCategory(val);
               handleUpdate(editValue, val);
             }}
+            onPointerDown={e => e.stopPropagation()}
             style={{ padding: '2px 4px', fontSize: '0.75rem', flex: 1 }}
           >
             <option value="">Kategori...</option>
@@ -254,8 +256,20 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
       {!isEditing && (
         <div className="meal-item-actions">
           {count > 0 && <span className="meal-count-badge" title="Antal gånger använd">{count}</span>}
-          <button className="icon-btn-sm" onClick={() => setIsEditing(true)}><Edit2 size={12} /></button>
-          <button className="icon-btn-sm danger-btn" onClick={handleDelete}><Trash2 size={12} /></button>
+          <button 
+            className="icon-btn-sm" 
+            onClick={() => setIsEditing(true)}
+            onPointerDown={e => e.stopPropagation()}
+          >
+            <Edit2 size={12} />
+          </button>
+          <button 
+            className="icon-btn-sm danger-btn" 
+            onClick={handleDelete}
+            onPointerDown={e => e.stopPropagation()}
+          >
+            <Trash2 size={12} />
+          </button>
         </div>
       )}
     </div>
