@@ -82,8 +82,9 @@ export const MealIndex: React.FC = () => {
   };
 
   const clearAllMeals = async () => {
-    if (window.confirm("Är du säker på att du vill ta bort ALLA maträtter från listan? Detta kan inte ångras.")) {
+    if (window.confirm("Är du säker på att du vill ta bort ALLA maträtter och rensa hela din kalender? Detta kan inte ångras.")) {
       await db.meals.clear();
+      await db.plannedDays.clear();
     }
   };
 
