@@ -202,6 +202,12 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
         name: finalName,
         category: finalCategory || 'Okänd'
       });
+      
+      // Update corresponding meal names in the calendar
+      await db.plannedDays
+        .where('mealId')
+        .equals(id)
+        .modify({ mealName: finalName });
     }
     setIsEditing(false);
   };
