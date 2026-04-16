@@ -145,24 +145,22 @@ export const MealIndex: React.FC = () => {
       </div>
 
       <form onSubmit={addMeal} className="add-meal-form">
-        <div style={{ display: 'flex', flex: 1, gap: '0.5rem' }}>
-          <input
-            type="text"
-            placeholder="Ny maträtt..."
-            value={newMealName}
-            onChange={e => setNewMealName(e.target.value)}
-            style={{ flex: 1, minWidth: 0 }}
-          />
-          <select 
-            className="category-select"
-            value={newMealCategory} 
-            onChange={e => setNewMealCategory(e.target.value)}
-            style={{ width: '125px', flexShrink: 0 }}
-          >
-            <option value="">Kategori...</option>
-            {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-          </select>
-        </div>
+        <input
+          type="text"
+          placeholder="Ny maträtt..."
+          value={newMealName}
+          onChange={e => setNewMealName(e.target.value)}
+          style={{ flex: 1, minWidth: 0 }}
+        />
+        <select 
+          className="category-select"
+          value={newMealCategory} 
+          onChange={e => setNewMealCategory(e.target.value)}
+          style={{ width: '110px', flexShrink: 0 }}
+        >
+          <option value="">Kategori...</option>
+          {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+        </select>
         <button type="submit" className="add-btn"><Plus size={18} /></button>
       </form>
 
@@ -227,7 +225,7 @@ export const MealCard = ({ id, name, category, count, isDragging, dragHandleProp
       </div>
 
       {isEditing ? (
-        <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
+        <>
           <input
             autoFocus
             className="meal-edit-inline"
@@ -247,14 +245,14 @@ export const MealCard = ({ id, name, category, count, isDragging, dragHandleProp
             style={{ 
               padding: '2px 20px 2px 8px', 
               fontSize: '0.75rem', 
-              width: '125px', 
+              width: '110px', 
               flexShrink: 0 
             }}
           >
             <option value="">Kategori...</option>
             {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
-        </div>
+        </>
       ) : (
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
           {category && (
