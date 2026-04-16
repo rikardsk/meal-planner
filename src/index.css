@@ -491,7 +491,6 @@ h1, h2, h3 {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  cursor: grab;
   user-select: none;
   transition: var(--transition);
 }
@@ -508,6 +507,12 @@ h1, h2, h3 {
 
 .drag-handle {
   color: var(--text-secondary);
+  cursor: grab;
+  padding: 4px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 .empty-state {

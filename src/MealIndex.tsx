@@ -186,9 +186,10 @@ interface MealCardProps {
   category?: string;
   count: number;
   isDragging?: boolean;
+  dragHandleProps?: any;
 }
 
-export const MealCard = ({ id, name, category, count, isDragging }: MealCardProps) => {
+export const MealCard = ({ id, name, category, count, isDragging, dragHandleProps }: MealCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
   const [editCategory, setEditCategory] = useState(category || '');
@@ -221,7 +222,9 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
 
   return (
     <div className={clsx("meal-item", { "is-dragging": isDragging })}>
-      <GripVertical size={16} className="drag-handle" />
+      <div className="drag-handle" {...dragHandleProps} style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}>
+        <GripVertical size={16} />
+      </div>
 
       {isEditing ? (
         <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
@@ -231,7 +234,6 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
             value={editValue}
             onChange={e => setEditValue(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleUpdate()}
-            onPointerDown={e => e.stopPropagation()}
             style={{ flex: 2 }}
           />
           <select
@@ -242,7 +244,6 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
               setEditCategory(val);
               handleUpdate(editValue, val);
             }}
-            onPointerDown={e => e.stopPropagation()}
             style={{ padding: '2px 4px', fontSize: '0.75rem', flex: 1 }}
           >
             <option value="">Kategori...</option>
@@ -263,20 +264,8 @@ export const MealCard = ({ id, name, category, count, isDragging }: MealCardProp
       {!isEditing && (
         <div className="meal-item-actions">
           {count > 0 && <span className="meal-count-badge" title="Antal gånger använd">{count}</span>}
-          <button 
-            className="icon-btn-sm" 
-            onClick={() => setIsEditing(true)}
-            onPointerDown={e => e.stopPropagation()}
-          >
-            <Edit2 size={12} />
-          </button>
-          <button 
-            className="icon-btn-sm danger-btn" 
-            onClick={handleDelete}
-            onPointerDown={e => e.stopPropagation()}
-          >
-            <Trash2 size={12} />
-          </button>
+          <button className="icon-btn-sm" onClick={() => setIsEditing(true)}><Edit2 size={12} /></button>
+          <button className="icon-btn-sm danger-btn" onClick={handleDelete}><Trash2 size={12} /></button>
         </div>
       )}
     </div>
@@ -290,13 +279,14 @@ const DraggableMeal = ({ meal, count }: { meal: any, count: number }) => {
   });
 
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes} style={{ opacity: isDragging ? 0.4 : 1 }}>
+    <div ref={setNodeRef} style={{ opacity: isDragging ? 0.4 : 1 }}>
       <MealCard 
         id={meal.id} 
         name={meal.name} 
         category={meal.category} 
         count={count} 
         isDragging={isDragging} 
+        dragHandleProps={{ ...attributes, ...listeners }}
       />
     </div>
   );
